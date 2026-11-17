@@ -48,17 +48,21 @@ def _paginate(queryset, request, serializer_class=None, transform_fn=None, **ser
     }
 
 
+import threading
+
 def _send(subject, body, recipient):
-    try:
-        send_mail(
-            subject=subject,
-            message=body,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[recipient],
-            fail_silently=True,
-        )
-    except Exception:
-        pass
+    def _task():
+        try:
+            send_mail(
+                subject=subject,
+                message=body,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[recipient],
+                fail_silently=True,
+            )
+        except Exception:
+            pass
+    threading.Thread(target=_task, daemon=True).start()
 
 
 # ---------------------------------------------------------------------------

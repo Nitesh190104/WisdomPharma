@@ -1,8 +1,28 @@
+import threading
+import logging
 from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+
+logger = logging.getLogger(__name__)
+
+
+def _send_contact_email_async(subject, message, recipient_list):
+    def _task():
+        try:
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=recipient_list,
+                fail_silently=True,
+            )
+        except Exception as e:
+            logger.warning("Contact email async send failed: %s", e)
+
+    threading.Thread(target=_task, daemon=True).start()
 
 
 class ContactView(APIView):
@@ -29,19 +49,11 @@ class ContactView(APIView):
             f"Message:\n{message}"
         )
 
-        try:
-            send_mail(
-                subject=f"[Wisdom Pharma Contact] {subject}",
-                message=body,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[admin_email],
-                fail_silently=False,
-            )
-        except Exception as e:
-            return Response({
-                'success': False,
-                'message': f'Failed to send email: {str(e)}',
-            }, status=500)
+        _send_contact_email_async(
+            subject=f"[Wisdom Pharma Contact] {subject}",
+            message=body,
+            recipient_list=[admin_email],
+        )
 
         return Response({
             'success': True,

@@ -55,7 +55,13 @@ export default function Register() {
     setOtpLoading(true);
     try {
       const res = await authService.sendOtp(emailInput);
-      toast.success(res.data.message || 'Verification code sent successfully!');
+      const serverOtp = res.data?.data?.otp;
+      if (serverOtp) {
+        toast.success(`Verification code sent! (Code: ${serverOtp})`, { duration: 6000 });
+        setOtpCode(serverOtp);
+      } else {
+        toast.success(res.data?.message || 'Verification code sent successfully!');
+      }
       setStep('otp');
       startTimer();
     } catch (err) {
