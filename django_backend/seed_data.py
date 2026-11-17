@@ -9,6 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'wisdom_pharma.settings')
 django.setup()
 
+from django.conf import settings
 from apps.categories.models import Category
 from apps.medicines.models import Medicine
 from apps.authentication.models import User, Business
@@ -668,7 +669,8 @@ def run():
     # Users
     admin_email = getattr(settings, 'ADMIN_EMAIL', 'wisdom.admin@wisdompharma.com')
     admin_password = getattr(settings, 'ADMIN_PASSWORD', 'WisdomAdmin@123')
-    if not User.objects.filter(email=admin_email).exists():
+    admin_user = User.objects.filter(email=admin_email).first()
+    if not admin_user:
         admin_user = User.objects.create_superuser(
             email=admin_email,
             username=admin_email,
@@ -682,8 +684,18 @@ def run():
             is_superuser=True,
         )
         print(f"Admin user created: {admin_email} / {admin_password}")
+    else:
+        admin_user.set_password(admin_password)
+        admin_user.role = 'admin'
+        admin_user.is_approved = True
+        admin_user.is_active = True
+        admin_user.is_staff = True
+        admin_user.is_superuser = True
+        admin_user.save()
+        print(f"Admin user password verified: {admin_email}")
 
-    if not User.objects.filter(email='rahul@example.com').exists():
+    rahul = User.objects.filter(email='rahul@example.com').first()
+    if not rahul:
         User.objects.create_user(
             email='rahul@example.com',
             username='rahul@example.com',
@@ -699,8 +711,15 @@ def run():
             is_approved=True
         )
         print("Consumer user created: rahul@example.com / password123")
+    else:
+        rahul.set_password('password123')
+        rahul.role = 'consumer'
+        rahul.is_approved = True
+        rahul.is_active = True
+        rahul.save()
 
-    if not User.objects.filter(email='priya@medstore.com').exists():
+    priya = User.objects.filter(email='priya@medstore.com').first()
+    if not priya:
         s = User.objects.create_user(
             email='priya@medstore.com',
             username='priya@medstore.com',
@@ -719,6 +738,12 @@ def run():
             is_verified=True
         )
         print("Store user created: priya@medstore.com / password123")
+    else:
+        priya.set_password('password123')
+        priya.role = 'store'
+        priya.is_approved = True
+        priya.is_active = True
+        priya.save()
 
     # Seed About Page
     about_data = {
