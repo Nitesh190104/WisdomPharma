@@ -1,0 +1,75 @@
+{% extends 'web/base.html' %}
+
+{% block title %}{{ medicine.medicine_name }} - Details{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'web_home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'web_medicines' %}">Medicines</a></li>
+            <li class="breadcrumb-item active">{{ medicine.medicine_name }}</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm border-0 p-4 bg-white">
+        <div class="row">
+            <div class="col-md-5 text-center mb-4 mb-md-0">
+                {% if medicine.image %}
+                    <img src="{{ medicine.image }}" alt="{{ medicine.medicine_name }}" class="img-fluid rounded border" style="max-height: 350px;">
+                {% else %}
+                    <div class="bg-light p-5 rounded border d-flex align-items-center justify-content-center" style="height: 300px;">
+                        <i class="bi bi-capsule-pill display-1 text-muted"></i>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-7">
+                <span class="badge bg-light text-dark mb-2">{{ medicine.category.name|default:"General Medicine" }}</span>
+                <h2 class="fw-bold">{{ medicine.medicine_name }}</h2>
+                <p class="text-muted"><strong>Manufacturer:</strong> {{ medicine.manufacturer|default:"Wisdom Pharmaceuticals" }}</p>
+
+                <div class="d-flex align-items-center gap-3 my-3">
+                    <span class="display-6 fw-bold text-success">₹{{ medicine.retail_price|floatformat:2 }}</span>
+                    {% if medicine.wholesale_price %}
+                        <span class="text-muted text-decoration-line-through">₹{{ medicine.wholesale_price|floatformat:2 }} wholesale</span>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    {% if medicine.prescription_required %}
+                        <div class="alert alert-warning py-2"><i class="bi bi-exclamation-triangle"></i> Prescription Required (Rx)</div>
+                    {% else %}
+                        <div class="alert alert-success py-2"><i class="bi bi-check-circle"></i> Over The Counter (OTC) - No prescription needed</div>
+                    {% endif %}
+                </div>
+
+                <p class="fs-6">{{ medicine.description|default:"Standard quality pharmaceutical product." }}</p>
+
+                {% if medicine.composition %}
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Composition:</h6>
+                        <p class="text-muted small">{{ medicine.composition }}</p>
+                    </div>
+                {% endif %}
+
+                {% if medicine.dosage %}
+                    <div class="mb-3">
+                        <h6 class="fw-bold">Dosage:</h6>
+                        <p class="text-muted small">{{ medicine.dosage }}</p>
+                    </div>
+                {% endif %}
+
+                <div class="d-flex gap-3 mt-4">
+                    <a href="{% url 'web_medicines' %}" class="btn btn-outline-secondary">&larr; Back to Catalog</a>
+                    {% if user.is_authenticated %}
+                        <button class="btn btn-primary-custom" onclick="alert('Order placed via API backend.')"><i class="bi bi-cart-plus"></i> Add to Order</button>
+                    {% else %}
+                        <a href="{% url 'web_login' %}?next={{ request.path }}" class="btn btn-primary-custom">Log in to Order</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

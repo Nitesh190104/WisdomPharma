@@ -1,172 +1,148 @@
-# Wisdom Pharma
+# Wisdom Pharma (Django + React)
 
-Wisdom Pharma is a full-stack B2B + B2C pharmaceutical e-commerce and management platform. Consumers can buy medicines at retail prices with GST, medical stores can place wholesale orders, and admins can manage medicines, inventory, users, business approvals, orders, prescriptions, and analytics.
+A production-grade B2B + B2C pharmaceutical management and e-commerce platform built with **Django 5 (Python)** and **React 19 (Vite + Tailwind CSS)**, aligned with the **INT253: Web Development in Python using Django** curriculum.
 
-## Tech Stack
+---
 
-Frontend:
-- React 19, Vite, React Router DOM
-- Axios, Zustand, React Hook Form
-- Tailwind CSS, Framer Motion
-- React Icons, Lucide React, React Hot Toast
+## 🌟 Overview
 
-Backend:
-- Laravel 12, PHP 8.2+
-- Laravel Sanctum token authentication
-- REST APIs, middleware, form requests, policies, resources, repositories
-- MongoDB via `mongodb/laravel-mongodb`
-- File uploads, in-app notifications, log/SMPP-ready mail notifications
+Wisdom Pharma bridges pharmaceutical manufacturers, medical stores (B2B wholesale), and retail consumers (B2C) with role-based access, inventory tracking, prescription verification, order management, and AI-assisted care.
 
-Database:
-- MongoDB collections: `users`, `medicines`, `categories`, `carts`, `orders`, `order_items`, `prescriptions`, `businesses`, `notifications`, `personal_access_tokens`
+### Features
+* **B2C Consumer Portal**: Browse medicines with images, retail pricing with GST breakdown, prescription upload, cart & checkout, order tracking, and Gemini AI Care Assistant.
+* **B2B Medical Store Portal**: Register with GST and Drug License numbers, bulk ordering with tiered wholesale pricing, minimum order thresholds, and store analytics.
+* **Admin Management Panel**: Real-time business analytics (revenue charts, order distribution, low-stock alerts), inventory controls, prescription verification, and medical store approvals.
+* **INT253 Syllabus Portal (`/portal/`)**: Django template-based portal demonstrating all 6 units of the INT253 curriculum.
 
-## Features
+---
 
-Consumer:
-- Browse, search, filter, and view medicines
-- Retail pricing with GST calculation
-- Add to cart, checkout, place orders
-- Upload prescriptions and view review status
-- View order history and manage profile
+## 🏗️ Tech Stack
 
-Medical Store:
-- Register as a business with GST and drug license details
-- Wholesale pricing and bulk order flow
-- Store dashboard and order tracking
-- Business approval handled by admin
+* **Backend**: Django 5.2, Django REST Framework (DRF), SimpleJWT Authentication, CORS Headers, WhiteNoise, Gunicorn
+* **Frontend**: React 19, Vite, Tailwind CSS, Zustand, Framer Motion, Recharts, React Hot Toast
+* **AI & External Integrations**: Google Gemini AI (Chatbot & Assistant), Razorpay Payment Gateway, SMTP Mail
 
-Admin:
-- Login through the normal login form using admin credentials
-- Analytics dashboard
-- Manage medicines, categories, users, orders, inventory, and prescriptions
-- Add/remove medicines, update prices, and increase/decrease stock
-- Approve/reject medical store business accounts
-- Review uploaded prescriptions
+---
 
-## Default Credentials
-
-| Role | Email | Password |
-| --- | --- | --- |
-| Admin | `wisdom.admin@wisdompharma.com` | `WisdomAdmin@123` |
-| Consumer | `rahul@example.com` | `password123` |
-| Medical Store | `priya@medstore.com` | `password123` |
-
-## Setup
-
-### Backend
-
-```bash
-cd backend
-composer install
-php artisan storage:link
-php artisan config:clear
-php artisan db:seed
-php artisan serve
-```
-
-Backend URL: `http://localhost:8000`
-
-Important `.env` values:
-
-```env
-DB_CONNECTION=mongodb
-DB_DSN=mongodb+srv://username:password@cluster.example.mongodb.net/
-DB_DATABASE=wisdom_pharma
-MAIL_MAILER=log
-```
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Frontend URL: `http://localhost:5173`
-
-## API Overview
-
-Public:
-- `POST /api/auth/register`
-- `POST /api/auth/login`
-- `GET /api/medicines`
-- `GET /api/medicines/featured`
-- `GET /api/medicines/{id}`
-- `GET /api/categories`
-
-Authenticated:
-- `GET /api/auth/profile`
-- `PUT /api/auth/profile`
-- `POST /api/auth/logout`
-- `GET /api/cart`
-- `POST /api/cart/add`
-- `PUT /api/cart/update`
-- `DELETE /api/cart/remove/{medicineId}`
-- `POST /api/orders`
-- `GET /api/orders`
-- `POST /api/orders/{id}/cancel`
-- `GET /api/prescriptions`
-- `POST /api/prescriptions`
-
-Admin:
-- `GET /api/admin/dashboard`
-- `POST /api/admin/medicines`
-- `PUT /api/admin/medicines/{id}`
-- `DELETE /api/admin/medicines/{id}`
-- `POST /api/admin/categories`
-- `PUT /api/admin/categories/{id}`
-- `DELETE /api/admin/categories/{id}`
-- `GET /api/admin/users`
-- `PUT /api/admin/users/{id}`
-- `GET /api/admin/inventory`
-- `PUT /api/admin/inventory/{id}/stock`
-- `GET /api/admin/orders`
-- `PUT /api/admin/orders/{id}/status`
-- `GET /api/admin/businesses/pending`
-- `POST /api/admin/businesses/{id}/approve`
-- `POST /api/admin/businesses/{id}/reject`
-- `GET /api/admin/prescriptions`
-- `PUT /api/admin/prescriptions/{id}/review`
-
-## Structure
+## 📁 Repository Structure
 
 ```text
-backend/
-  app/Http/Controllers/Api
-  app/Http/Middleware
-  app/Http/Requests
-  app/Http/Resources
-  app/Mail
-  app/Models
-  app/Policies
-  app/Repositories
-  app/Services
-  routes/api.php
-
-frontend/
-  src/components
-  src/context
-  src/hooks
-  src/layouts
-  src/pages
-  src/routes
-  src/services
-  src/store
-  src/utils
+├── django_backend/          # Django 5 Backend & REST API
+│   ├── apps/               # Modular Django apps (auth, medicines, cart, orders, etc.)
+│   ├── templates/          # Django DTL templates (INT253 Units II, III, IV, VI)
+│   ├── wisdom_pharma/      # Core settings, WSGI, ASGI, middleware, and root URLs
+│   ├── Medicines/          # High-resolution .avif product images
+│   ├── manage.py           # Django management CLI
+│   ├── requirements.txt    # Python dependencies
+│   ├── seed_data.py        # Database seeder (40 medicines, 8 categories, test accounts)
+│   ├── Procfile            # Deployment process definition (Render/Railway/Heroku)
+│   └── .env.example        # Environment variable template
+├── frontend/               # React 19 + Vite Frontend SPA
+│   ├── src/                # Components, pages, hooks, store, and services
+│   ├── vercel.json         # SPA routing configuration for Vercel deployment
+│   ├── package.json        # Node dependencies & build scripts
+│   └── .env.example        # Frontend environment variable template
+├── Medicines/              # Original catalog image assets
+├── .gitignore              # Master gitignore protecting secrets and databases
+└── README.md
 ```
 
-## Verification
+---
 
-Syllabus mapping checklist: see `SYLLABUS-COVERAGE.md`.
+## 🚀 Quickstart & Local Setup
 
+### 1. Prerequisites
+* Python 3.10+ (Recommended: Python 3.12)
+* Node.js 18+ & npm
+
+### 2. Backend Setup (Django)
+```bash
+cd django_backend
+
+# 1. Create and activate a virtual environment
+python -m venv venv
+# Windows:
+venv\Scripts\activate
+# Linux/Mac:
+source venv/bin/activate
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Create .env from template
+copy .env.example .env     # Windows
+cp .env.example .env       # Linux/Mac
+
+# 4. Run database migrations
+python manage.py migrate
+
+# 5. Seed the database with catalog and test users
+python seed_data.py
+
+# 6. Start the development server
+python manage.py runserver 127.0.0.1:8000
+```
+Backend API will be accessible at: `http://127.0.0.1:8000/api/`  
+Django Admin: `http://127.0.0.1:8000/admin/`  
+Syllabus Portal: `http://127.0.0.1:8000/portal/`
+
+### 3. Frontend Setup (React / Vite)
 ```bash
 cd frontend
-npm run lint
-npm run build
 
-cd ../backend
-php artisan test
+# 1. Install dependencies
+npm install
+
+# 2. Create .env from template
+copy .env.example .env     # Windows
+cp .env.example .env       # Linux/Mac
+
+# 3. Start development server
+npm run dev
 ```
+Frontend will be accessible at: `http://localhost:5173/`
 
-Current note: Vite may need to run outside this tool sandbox on Windows because Tailwind/Vite native process loading can be blocked by sandbox permissions.
+---
+
+## 🔑 Test Credentials
+
+| Role | Email | Password |
+| :--- | :--- | :--- |
+| **Admin** | `wisdom.admin@wisdompharma.com` | `WisdomAdmin@123` |
+| **Consumer** | `rahul@example.com` | `password123` |
+| **Medical Store** | `priya@medstore.com` | `password123` |
+
+---
+
+## 🚢 Deployment Guide
+
+### Deploying the Backend (Render / Railway / VPS)
+1. Set the **Root Directory** to `django_backend`.
+2. **Build Command**:
+   ```bash
+   pip install -r requirements.txt && python manage.py migrate && python seed_data.py && python manage.py collectstatic --noinput
+   ```
+3. **Start Command**:
+   ```bash
+   gunicorn wisdom_pharma.wsgi --log-file -
+   ```
+4. Set environment variables based on `django_backend/.env.example`:
+   * `SECRET_KEY`
+   * `DEBUG=False`
+   * `ALLOWED_HOSTS=*`
+   * `FRONTEND_URL=https://your-frontend-deployment.vercel.app`
+   * `GEMINI_API_KEY=your_key`
+
+### Deploying the Frontend (Vercel / Netlify)
+1. Connect this repository and set **Root Directory** to `frontend`.
+2. **Framework Preset**: Vite
+3. **Build Command**: `npm run build`
+4. **Output Directory**: `dist`
+5. Set Environment Variables:
+   * `VITE_API_URL=https://your-backend.onrender.com/api`
+   * `VITE_API_BASE_URL=https://your-backend.onrender.com/api`
+
+---
+
+## 📄 License
+MIT License. Built for academic and educational purposes.

@@ -1,0 +1,57 @@
+# ==============================================================================
+# Root .gitignore for Wisdom Pharma (Django + React)
+# ==============================================================================
+
+# Environment files & Secrets (NEVER COMMIT)
+.env
+.env.*
+*.env
+!.env.example
+!**/.env.example
+
+# Databases
+*.sqlite3
+*.db
+db.sqlite3
+
+# Python Virtual Environments & Cache
+venv/
+env/
+.venv/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Static & Uploaded Media
+media/
+staticfiles/
+django_backend/staticfiles/
+django_backend/media/
+
+# Frontend Node Modules & Build Outputs
+node_modules/
+dist/
+dist-ssr/
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+
+# Temporary / Scratch files
+scratch/
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Legacy backend (preserved locally, excluded from Django repo)
+backend/
