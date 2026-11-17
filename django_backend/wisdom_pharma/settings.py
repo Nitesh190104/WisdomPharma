@@ -133,6 +133,7 @@ if frontend_url_env and frontend_url_env not in CORS_ALLOWED_ORIGINS:
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https:\/\/.*\.vercel\.app$",
 ]
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
     'accept',
@@ -202,4 +203,26 @@ FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:5173')
 # Admin credentials (for initial setup)
 ADMIN_EMAIL = config('ADMIN_EMAIL', default='wisdom.admin@wisdompharma.com')
 ADMIN_PASSWORD = config('ADMIN_PASSWORD', default='WisdomAdmin@123')
+
+# Console logging for production (Render / Gunicorn)
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
 
