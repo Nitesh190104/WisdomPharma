@@ -667,6 +667,23 @@ def run():
     print(f"Successfully seeded {Medicine.objects.count()} medicines across {Category.objects.count()} categories!")
 
     # Users
+    admin_email = getattr(settings, 'ADMIN_EMAIL', 'wisdom.admin@wisdompharma.com')
+    admin_password = getattr(settings, 'ADMIN_PASSWORD', 'WisdomAdmin@123')
+    if not User.objects.filter(email=admin_email).exists():
+        admin_user = User.objects.create_superuser(
+            email=admin_email,
+            username=admin_email,
+            password=admin_password,
+            first_name='Wisdom',
+            last_name='Admin',
+            role='admin',
+            is_approved=True,
+            is_active=True,
+            is_staff=True,
+            is_superuser=True,
+        )
+        print(f"Admin user created: {admin_email} / {admin_password}")
+
     if not User.objects.filter(email='rahul@example.com').exists():
         User.objects.create_user(
             email='rahul@example.com',
