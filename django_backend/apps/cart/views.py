@@ -29,10 +29,14 @@ def _get_cart_data(user):
         item_subtotal = unit_price * item.quantity
         item_total = item_subtotal + gst_amount
 
+        img = med.image or ''
+        if '/images/medicines/' in img and request:
+            img = request.build_absolute_uri(f"/images/medicines/{img.split('/images/medicines/')[-1]}")
+
         items_list.append({
             'medicine_id': med.id,
             'medicine_name': med.medicine_name,
-            'image': med.image or '',
+            'image': img,
             'quantity': item.quantity,
             'unit_price': unit_price,
             'gst_percentage': gst_pct,

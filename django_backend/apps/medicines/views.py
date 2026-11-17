@@ -15,6 +15,16 @@ from apps.authentication.permissions import IsAdminRole
 
 def _medicine_data(med, request=None):
     category_name = med.category.name if med.category else 'General'
+    img = med.image or ''
+    if '/images/medicines/' in img:
+        filename = img.split('/images/medicines/')[-1]
+        if request:
+            img = request.build_absolute_uri(f'/images/medicines/{filename}')
+        else:
+            img = f'/images/medicines/{filename}'
+    elif img.startswith('/') and request:
+        img = request.build_absolute_uri(img)
+
     return {
         'id': med.id,
         '_id': str(med.id),
@@ -36,7 +46,7 @@ def _medicine_data(med, request=None):
         'expiry_date': med.expiry_date.isoformat() if med.expiry_date else None,
         'manufacturer': med.manufacturer,
         'prescription_required': med.prescription_required,
-        'image': med.image,
+        'image': img,
         'is_active': med.is_active,
         'min_wholesale_qty': med.min_wholesale_qty,
         'dosage': med.dosage,

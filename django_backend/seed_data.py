@@ -639,12 +639,11 @@ def run():
             )
             cat_map[c_name] = c
 
-    app_url = 'http://localhost:8000'
     for med in raw_medicines:
         name = med['name']
         img_name = 'Antiseptic Liquid' if name == 'Antiseptic Liquid 100ml' else name
         quoted = urllib.parse.quote(img_name)
-        image_url = f'{app_url}/images/medicines/{quoted}.avif'
+        image_url = f'/images/medicines/{quoted}.avif'
 
         Medicine.objects.create(
             medicine_name=name,
