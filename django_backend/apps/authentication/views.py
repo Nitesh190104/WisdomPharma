@@ -84,6 +84,57 @@ def _get_tokens(user):
 
 
 # ---------------------------------------------------------------------------
+# TestEmailView (Diagnostic for production mail delivery)
+# ---------------------------------------------------------------------------
+
+class TestEmailView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        target = request.query_params.get('to', settings.DEFAULT_FROM_EMAIL)
+        host_user = settings.EMAIL_HOST_USER or ''
+        masked_user = (host_user[:3] + '***' + host_user[host_user.find('@'):]) if '@' in host_user else ('SET' if host_user else 'EMPTY')
+        
+        info = {
+            'email_host': settings.EMAIL_HOST,
+            'email_port': settings.EMAIL_PORT,
+            'email_host_user': masked_user,
+            'has_password': bool(settings.EMAIL_HOST_PASSWORD),
+            'default_from': settings.DEFAULT_FROM_EMAIL,
+            'target': target,
+        }
+        
+        try:
+            import socket
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(5)
+            connect_res = sock.connect_ex((settings.EMAIL_HOST, settings.EMAIL_PORT))
+            sock.close()
+            info['smtp_port_reachable'] = (connect_res == 0)
+            info['socket_code'] = connect_res
+        except Exception as sock_err:
+            info['smtp_port_reachable'] = False
+            info['socket_error'] = str(sock_err)
+
+        try:
+            res = send_mail(
+                subject='Wisdom Pharma Test Verification Email',
+                message='This is a verification test email from Wisdom Pharma backend.',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[target],
+                fail_silently=False,
+            )
+            info['send_mail_success'] = True
+            info['result'] = res
+            return Response({'success': True, 'data': info})
+        except Exception as e:
+            info['send_mail_success'] = False
+            info['error_type'] = type(e).__name__
+            info['error_message'] = str(e)
+            return Response({'success': False, 'data': info}, status=500)
+
+
+# ---------------------------------------------------------------------------
 # SendOtpView
 # ---------------------------------------------------------------------------
 
@@ -118,11 +169,7 @@ class SendOtpView(APIView):
 
         return Response({
             'success': True,
-            'message': 'OTP sent successfully',
-            'data': {
-                'otp': otp_code,
-                'demo_master_otp': '123456',
-            }
+            'message': f'Verification code sent to {email}. Please check your inbox.',
         })
 
 
